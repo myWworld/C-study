@@ -24,6 +24,56 @@ namespace MyExcel
 
 		Vector(int n = 10) : data(new T[n]), capacity(n), length(0) {};
 
+		Vector(const Vector& other)
+			: data(other.data), capacity(other.capacity), length(other.length)
+		{
+			for (int i = 0; i < length; i++)
+			{
+				data[i] = other.data[i];
+			}
+		}
+
+		Vector(const Vector&& other)
+			: data(other.data), capacity(other.capacity), length(other.length)
+		{
+			other.data = nullptr;
+			other.capacity = 0;
+			other.length = 0;
+		}
+
+		Vector& operator=(Vector& other)
+		{
+			if (this != &other) {
+				delete[] data;
+
+				data = new T[other.capacity];
+				capacity = other.capacity;
+				length = other.length;
+
+				for (int i = 0; i < length; i++) {
+					data[i] = other.data[i];
+				}
+			}
+			return *this;
+		}
+
+		Vector& operator=(Vector&& other)
+		{
+			if (this != &other) {
+				delete[] data;
+
+				data = other.data;
+				capacity = other.capacity;
+				length = other.length;
+
+				other.data = nullptr;
+				other.capacity = 0;
+				other.length = 0;
+			}
+			return *this;
+		}
+
+
 		void push_back(T s)
 		{
 			if (capacity <= length)
@@ -32,7 +82,7 @@ namespace MyExcel
 
 				for (int i = 0; i < length; i++)
 				{
-					temp[i] = data[i];
+					temp[i] = std::move(data[i]);
 				}
 
 				delete[]data;
@@ -47,7 +97,9 @@ namespace MyExcel
 
 		}
 
-		T operator[] (int i) { return data[i]; }
+
+
+		T& operator[] (int i) { return data[i]; }
 
 		int size() { return length; }
 
@@ -68,6 +120,7 @@ namespace MyExcel
 				delete[]data;
 		}
 	};
+
 
 
 	template<>
